@@ -10,7 +10,7 @@
 	<artifactId>radiatorviewplugin</artifactId>
 	<packaging>hpi</packaging>
 	<name>Radiator View Plugin</name>
-	<version>1.23-SNAPSHOT</version>
+	<version>1.25-SNAPSHOT</version>
 	<url>http://wiki.jenkins-ci.org/display/JENKINS/Radiator+View+Plugin</url>
 	<description>Adds a new high visibility view of project status.</description>
 	<!--
@@ -39,6 +39,17 @@
 		</repository>
 	</repositories>
 
+    <build>
+    	<pluginManagement>
+    		<plugins>
+    			<plugin>
+    				<groupId>org.apache.maven.plugins</groupId>
+    				<artifactId>maven-release-plugin</artifactId>
+    				<version>2.5.1</version>
+    			</plugin>
+    		</plugins>
+    	</pluginManagement>
+    </build>
 	<distributionManagement>
 		<!--  maven3 doesn't support anymore id local -->
 		<snapshotRepository>
