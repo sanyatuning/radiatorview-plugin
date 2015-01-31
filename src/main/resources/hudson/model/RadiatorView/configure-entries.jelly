@@ -42,10 +42,12 @@
 		<f:checkbox name="highVis" checked="${it.highVis}" value="true" field="highVis" />
 	</f:entry>
 	
-	
-	<f:entry title="${%Show as Projects?}" field="groupByPrefix" help="/plugin/radiatorviewplugin/help/groupByPrefix.html">
-		<f:checkbox name="groupByPrefix" checked="${it.groupByPrefix}" value="true" field="groupByPrefix" />
-	</f:entry>
+	<f:optionalBlock name="groupByRegex" title="${%Show as Projects?}"
+                     checked="${it.groupByRegex}" help="/plugin/radiatorviewplugin/help/groupByPrefix.html">
+      <f:entry title="${%Regular expression}">
+        <f:textbox name="groupRegex" field="groupRegex" />
+      </f:entry>
+    </f:optionalBlock>
 
 	<f:entry title="${%Show build stability?}" field="showBuildStability" help="/plugin/radiatorviewplugin/help/showbuildStability.html">
 		<f:checkbox name="showBuildStability" checked="${it.showBuildStability}" value="true" field="showBuildStability" />

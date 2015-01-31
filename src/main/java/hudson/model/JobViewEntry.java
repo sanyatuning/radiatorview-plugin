@@ -5,15 +5,16 @@ import hudson.matrix.MatrixRun;
 import hudson.matrix.MatrixBuild;
 import hudson.tasks.test.AbstractTestResultAction;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.String;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.jfree.util.Log;
 
 /**
  * Represents a job to be shown in a view. Based heavily on the XFPanelEntry in
@@ -263,43 +264,55 @@ public class JobViewEntry implements IViewEntry {
 		return r;
 	}
 
-	public Collection<String> getCulprits() {
-		Run<?, ?> run = this.job.getLastBuild();
-		Set<String> culprits = new HashSet<String>();
-		while (run != null) {
-			if (run instanceof AbstractBuild<?, ?>) {
-
-				AbstractBuild<?, ?> build = (AbstractBuild<?, ?>) run;
-
-				Iterator<User> it = build.getCulprits().iterator();
-				while (it.hasNext()) {
-					culprits.add(it.next().getFullName());
-				}
-			}
-			run = run.getPreviousBuild();
-			if (run != null && Result.SUCCESS.equals(run.getResult())) {
-				// don't look for culprits in successful builds.
-				run = null;
-			}
+	public Collection<User> getCulprits() {
+        ArrayList<User> culprits = new ArrayList<User>();
+        Run<?, ?> build = this.job.getLastBuild();
+		while (isFailure(build)) {
+            for (User user : getCulprits(build)) {
+                if (culprits.contains(user)) {
+                    continue;
+                }
+                culprits.add(0, user);
+            }
+			build = build.getPreviousBuild();
 		}
 		return culprits;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see hudson.model.IViewEntry#getCulprit()
-	 */
+    private Collection<User> getCulprits(Run<?, ?> run) {
+        if (run instanceof AbstractBuild<?, ?>) {
+            AbstractBuild<?, ?> build = (AbstractBuild<?, ?>) run;
+            return build.getCulprits();
+        }
+        return new HashSet<User>();
+    }
+
+    private boolean isFailure(Run<?, ?> build) {
+        return build != null && !Result.SUCCESS.equals(build.getResult());
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see hudson.model.IViewEntry#getCulprit()
+     */
 	public String getCulprit() {
-		Collection<String> culprits = getCulprits();
-		String culprit = " - ";
-		if (!culprits.isEmpty()) {
-			culprit = StringUtils.join(culprits, ", ");
-		}
-		return culprit;
+		Collection<User> culprits = getCulprits();
+        Set<String> users = new HashSet<String>();
+		if (culprits.isEmpty()) {
+            return " - ";
+        }
+        for (User user : culprits) {
+            users.add(user.getFullName());
+        }
+        return  StringUtils.join(users, ", ");
 	}
 
-	/*
+    public String getGravatar() {
+        return RadiatorUtil.getGravatar(getCulprits());
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see hudson.model.IViewEntry#getDiffColor()

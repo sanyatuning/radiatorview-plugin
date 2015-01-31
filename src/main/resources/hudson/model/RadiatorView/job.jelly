@@ -8,13 +8,13 @@
 	<j:if test="${job.building || job.queued}">
 		<j:set var="clazz" value="building" />
 	</j:if>
-	<div style="${jobStyle}  background-color:${job.backgroundColor};"
-		class="job ${job.getStatus()} ${clazz}" tooltip="${job.name}" id="job">
+	<div class="job-cont">
+	    <div class="job ${job.getStatus()} ${clazz}">
 
+		<st:include page="gravatar.jelly" />
 		<!--  Job Name Title -->
 		<p>
-			<a style="color: ${job.color}; font-size: ${jobFont}; font-weight:bold;"
-				href="${rootURL}/${job.lastBuildUrl}">${job.name}</a>
+			<a class="jobtitle"	href="${rootURL}/${job.lastBuildUrl}">${job.name}</a>
 		</p>
 		<!--  Build health icon -->
 		<j:if test="${showBuildStability}">
@@ -63,36 +63,8 @@
 				</p>
 			</j:if>
 		</j:if>
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
-		<br />
+
+		</div>
 	</div>
 
 </j:jelly>

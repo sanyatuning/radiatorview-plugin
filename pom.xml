@@ -17,13 +17,13 @@
 		We need the following because the artifactId=radiatorviewplugin but
 		directoryName=radiatorview, and Maven infers the wrong value if I
 		don't specify it explicitly.
-	--> 
+	-->
 	<scm>
 		<connection>scm:git:git://github.com/jenkinsci/radiatorview-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:jenkinsci/radiatorview-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/radiatorview-plugin</url>
 	  <tag>HEAD</tag>
-  </scm>
+    </scm>
 	<developers>
 		<developer>
 			<id>batmat</id>
@@ -59,7 +59,13 @@
 			<version>1.7</version>
 			<optional>true</optional>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>mailer</artifactId>
+            <version>1.4</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 
     <pluginRepositories>
         <pluginRepository>

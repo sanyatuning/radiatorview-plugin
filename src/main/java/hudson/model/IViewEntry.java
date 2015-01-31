@@ -72,7 +72,7 @@ public interface IViewEntry {
 	public abstract String getCulprit();
 	
 	
-    public Collection<String> getCulprits();
+    public Collection<User> getCulprits();
 
 	/**
 	 * @return color to be used to show the test diff

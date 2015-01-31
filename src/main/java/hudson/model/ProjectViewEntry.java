@@ -3,6 +3,10 @@
  */
 package hudson.model;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -207,22 +211,34 @@ public class ProjectViewEntry implements IViewEntry {
 		return "white";
 	}
 
-	public Collection<String> getCulprits() {
-		Set<String> culprits = new HashSet<String>();
+	public Collection<User> getCulprits() {
+		Set<User> culprits = new HashSet<User>();
 		for (IViewEntry job : getFailingJobs()) {
 			culprits.addAll(job.getCulprits());
 		}
 		return culprits;
 	}
 
-	public String getCulprit() {
-		Collection<String> culprits = getCulprits();
-		String culprit = null;
-		if (!culprits.isEmpty()) {
-			culprit = StringUtils.join(culprits, ", ");
-		}
-		return culprit;
-	}
+    /*
+	 * (non-Javadoc)
+	 *
+	 * @see hudson.model.IViewEntry#getCulprit()
+	 */
+    public String getCulprit() {
+        Collection<User> culprits = getCulprits();
+        Set<String> users = new HashSet<String>();
+        if (culprits.isEmpty()) {
+            return " - ";
+        }
+        for (User user : culprits) {
+            users.add(user.getFullName());
+        }
+        return  StringUtils.join(users, ", ");
+    }
+
+    public String getGravatar() {
+        return RadiatorUtil.getGravatar(getCulprits());
+    }
 
 	public String getDiff() {
 		// TODO Auto-generated method stub
@@ -316,6 +332,11 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public boolean isNotBuilt() {
-		throw new UnsupportedOperationException();
+        for (IViewEntry job : jobs) {
+            if (job.isNotBuilt()) {
+                return true;
+            }
+        }
+        return false;
 	}
 }

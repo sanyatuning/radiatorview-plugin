@@ -6,35 +6,41 @@
 
 	<!-- show in a different style if the job is building or queued. -->
 	<j:set var="clazz" value="normal" />
+	<j:if test="${job.building || job.queued}">
+		<j:set var="clazz" value="building" />
+	</j:if>
 
-	<div
-		class="job ${job.status} ${clazz}" style="${jobStyle}"
-		 id="job">
+    <div class="job-cont">
+	    <div class="job ${job.status} ${clazz}">
 
+		<st:include page="gravatar.jelly" />
 		<!-- Job Name Title -->
-		<ul class="menu" style="margin:0; padding:0;">
-			<li class="menu">
-				<a class="jobtitle"
-					style="color: ${job.color}; font-size: ${jobFont};"
-					>
-					${job.name}
-				</a>
-				<ul>
-					<j:forEach var="subjob" items="${job.getJobs()}">
-						<j:invokeStatic className="org.apache.commons.lang.StringUtils"
-							method="removeStart" var="subjobShortName">
-							<j:arg type="java.lang.String" value="${subjob.name}" />
-							<j:arg type="java.lang.String" value="${job.name}_" />
-						</j:invokeStatic>
-						<li>
-							<a href="${rootURL}/${subjob.url}">${subjobShortName}</a> - ${subjob.status}
-							<j:if test="${subjob.getBuilding()}">(building now)</j:if>
-							<j:if test="${subjob.getQueued()}">(build pending)</j:if>
-						</li>
-					</j:forEach>
-				</ul>
-			</li>
-		</ul>
+		<p>
+            <a class="jobtitle">
+                ${job.name}
+            </a>
+            <j:if test="${job.getStable()}">
+                <ul>
+                    <j:forEach var="subjob" items="${job.getJobs()}">
+                        <j:invokeStatic className="org.apache.commons.lang.StringUtils"
+                            method="removeStart" var="subjobShortName">
+                            <j:arg type="java.lang.String" value="${subjob.name}" />
+                            <j:arg type="java.lang.String" value="${job.name}_" />
+                        </j:invokeStatic>
+                        <li>
+                            <j:if test="${subjob.url}">
+                                <a href="${rootURL}/${subjob.url}">${subjobShortName}</a> - ${subjob.status}
+                            </j:if>
+                            <j:if test="${!subjob.url}">
+                                ${subjobShortName} - ${subjob.status}
+                            </j:if>
+                            <j:if test="${subjob.getBuilding()}">(building now)</j:if>
+                            <j:if test="${subjob.getQueued()}">(build pending)</j:if>
+                        </li>
+                    </j:forEach>
+                </ul>
+            </j:if>
+        </p>
 
 		<j:invoke var="passJobs" on="${job}" method="getPassingJobs" />
 		<j:invoke var="failJobs" on="${job}" method="getUnclaimedJobs" />
@@ -103,6 +109,7 @@
 				</ul>
 			</p>
 		</j:if>
+    	</div>
 	</div>
 
 </j:jelly>

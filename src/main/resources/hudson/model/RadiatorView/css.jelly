@@ -1,0 +1,181 @@
+<j:jelly xmlns:j="jelly:core">
+    <style type="text/css">
+        #header {
+            display:none;
+        }
+        #side-panel {
+            display:none;
+        }
+        #view-message {
+            display:none;
+        }
+        #main-panel {
+            padding: 0px;
+            width: 99vw;
+            height: 90vh;
+        }
+
+        ul.config li.config {
+            display: block;
+            width: auto;
+            height: 16px;
+            overflow: hidden;
+        }
+
+        ul.config li.config:hover {
+            height: auto;
+            width: 150px;
+            overflow: visible;
+            background-color:#ddd;
+            border: solid black 1px;
+            padding-left:10px;
+            padding-bottom:10px;
+        }
+
+        div.config {
+            position:absolute;
+            right:0; top:0;
+            z-index:65535;
+        }
+
+        .building {
+            // todo
+        }
+
+        ul.menu li.menu {
+            display: block;
+            width: auto;
+            overflow: hidden;
+        }
+
+        ul.menu ali.menu:hover {
+            height: 90%;
+            width: auto;
+            overflow: auto;
+            background-color: #ddd;
+
+            background: rgb(240, 240, 240) transparent;
+            background: rgba(240, 240, 240, 0.6);
+            border: solid black 1px;
+            padding-right:10px;
+            padding-bottom:10px;
+        }
+
+        a.nolink {
+            text-decoration: none;
+        }
+
+        a:hover {
+            position: relative;
+        }
+
+        a span {
+            display: none;
+        }
+
+        a:hover span {
+            display: block;
+            position: absolute;
+            top: 10px;
+            left: 0;
+            /* formatting only styles */
+            padding: 5px;
+            margin: 10px;
+            z-index: 100;
+            background: #f0f0f0;
+            border: 1px dotted #c0c0c0;
+            opacity: 0.9;
+            /* end formatting */
+        }
+
+        .job-cont {
+            float: left;
+            margin: 0;
+            height: 100%;
+            padding: 10px 0 0 10px;
+            box-sizing: border-box;
+        }
+        .job {
+            height: 100%;
+            overflow: hidden;
+        }
+        .row {
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .row.cols1 .job-cont {
+            width: 100%;
+        }
+        .row.cols2 .job-cont {
+            width: 50%;
+        }
+        .row.cols3 .job-cont {
+            width: 33.33%;
+        }
+        .row.cols4 .job-cont {
+            width: 25%;
+        }
+        .row.cols5 .job-cont {
+            width: 20%;
+        }
+        .row.cols6 .job-cont {
+            width: 16.66%;
+        }
+        .row.cols7 .job-cont {
+            width: 14.28%;
+        }
+        .job .gravatar {
+            float: right;
+            height: 320px;
+            max-height: 100%
+        }
+        .job p,
+        .job .menu {
+            background-color: transparent;
+            margin: 0;
+            padding: 0 0.5em;
+        }
+        .job .jobtitle {
+            font-weight: bold;
+            font-size: 5em;
+            color: black;
+            text-decoration: none;
+        }
+        .failing {
+            background-color: rgb(235,26,36);
+        }
+
+        .successful {
+            background-color: rgb(0,138,44);
+        }
+
+        .never.built {
+            background-color: gray;
+        }
+        .claimed {
+            background-color: rgb(240,172,0);
+        }
+
+        .unstable {
+            background-color: yellow;
+        }
+
+        .dashboard {
+            position: fixed;
+            overflow: hidden;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 65530;
+        }
+
+        #caption {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</j:jelly>

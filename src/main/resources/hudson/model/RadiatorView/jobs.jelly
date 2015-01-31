@@ -33,26 +33,14 @@
 
 	<!-- render the failing jobs... -->
 	<j:if test="${!failJobs.isEmpty()}">
-		<j:set var="jobFont" value="xx-large" />
-		<j:set var="failFont" value="xx-large" />
-		<j:set var="infoFont" value="medium" />
-		<j:set var="buildFont" value="medium" />
-		<j:set var="iconSize" value="48x48" />
-
-
 		<j:set var="height" value="${(failJobsHeight / failJobRows.size())}" />
-		<j:set var="top" value="1" />
 		<j:set var="showDetail" value="true" />
 		<j:forEach var="row" items="${failJobRows}">
-			<j:set var="width" value="${(100 / row.size())}" />
-			<j:set var="left" value="0" />
-			<j:forEach var="job" items="${row}">
-				<j:set var="jobStyle"
-					value="left: ${left}%; top:${top}%; width:${width-1.4}%; height:${height-2}%; margin:.2%; padding-left: 1%;" />
-				<st:include page="job.jelly" />
-				<j:set var="left" value="${left + width}" />
-			</j:forEach>
-			<j:set var="top" value="${top + height}" />
+    		<div class="row cols${row.size()}" style="height:${height}%;">
+                <j:forEach var="job" items="${row}">
+                    <st:include page="job.jelly" />
+                </j:forEach>
+    		</div>
 		</j:forEach>
 	</j:if>
 
@@ -60,24 +48,14 @@
 		optionally show stable jobs if requested or there are none failing.
 	-->
 	<j:if test="${from.getShowStable() || failJobs.isEmpty()}">
-		<j:set var="jobFont" value="x-small" />
-		<j:set var="infoFont" value="xx-small" />
-		<j:set var="buildFont" value="xx-small" />
-		<j:set var="iconSize" value="16x16" />
-
 		<j:set var="height" value="${(passJobsHeight / passJobRows.size())}" />
-		<j:set var="top" value="${failJobsHeight}" />
 		<j:forEach var="row" items="${passJobRows}">
-			<j:set var="left" value="0" />
-			<j:forEach var="job" items="${row}">
-				<j:set var="width" value="${(100 / row.size())}" />
-				<j:set var="jobStyle"
-					value="left: ${left}%; top:${top}%; width:${width-1.4}%; height:${height-0.4}%; margin: 0.2%; padding-left: 1%;" />
-				<j:set var="showDetail" value="${from.getShowStableDetail()}" />
-				<st:include page="job.jelly" />
-				<j:set var="left" value="${left + width}" />
-			</j:forEach>
-			<j:set var="top" value="${top + height}" />
+			<div class="row cols${row.size()}" style="height:${height}%;">
+                <j:forEach var="job" items="${row}">
+                    <j:set var="showDetail" value="${from.getShowStableDetail()}" />
+                    <st:include page="job.jelly" />
+                </j:forEach>
+			</div>
 		</j:forEach>
 	</j:if>
 
