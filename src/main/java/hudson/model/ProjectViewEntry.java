@@ -62,16 +62,8 @@ public class ProjectViewEntry implements IViewEntry {
 	 * @see #getFailingJobs()
 	 */
 	public TreeSet<IViewEntry> getPassingJobs() {
-
 		computePassingAndFailingJobs();
 
-		if (failing.size() > 0) {
-			TreeSet<IViewEntry> aggregate = new TreeSet<IViewEntry>(
-					new EntryComparator());
-			aggregate.addAll(unstable);
-			aggregate.addAll(completelyPassing);
-			return aggregate;
-		}
 		return completelyPassing;
 	}
 
@@ -87,10 +79,7 @@ public class ProjectViewEntry implements IViewEntry {
 	public TreeSet<IViewEntry> getFailingJobs() {
 		computePassingAndFailingJobs();
 
-		if (failing.size() > 0) {
-			return failing;
-		}
-		return unstable;
+		return failing;
 	}
 
 	/**
@@ -104,12 +93,9 @@ public class ProjectViewEntry implements IViewEntry {
 		}
 		completelyPassing = new TreeSet<IViewEntry>(new EntryComparator());
 		failing = new TreeSet<IViewEntry>(new EntryComparator());
-		unstable = new TreeSet<IViewEntry>(new EntryComparator());
 		for (IViewEntry job : jobs) {
-			if (job.getBroken() || job.getFailCount() > 0) {
+			if (job.getBroken() || job.getFailCount() > 0 || !job.getStable() || job.getQueued() || job.getBuilding()) {
 				failing.add(job);
-			} else if (!job.getStable()) {
-				unstable.add(job);
 			} else {
 				completelyPassing.add(job);
 			}
@@ -191,11 +177,12 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public Boolean getBuilding() {
-		boolean building = false;
 		for (IViewEntry job : jobs) {
-			building |= job.getBuilding();
+			if (job.getBuilding()) {
+			    return true;
+			}
 		}
-		return building;
+		return false;
 	}
 
 	public String getClaim() {
@@ -269,8 +256,12 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public Boolean getQueued() {
-		// TODO Auto-generated method stub
-		return null;
+        for (IViewEntry job : jobs) {
+            if (job.getQueued()) {
+                return true;
+            }
+        }
+        return false;
 	}
 
 	public boolean getStable() {

@@ -39,10 +39,6 @@
             z-index:65535;
         }
 
-        .building {
-            // todo
-        }
-
         ul.menu li.menu {
             display: block;
             width: auto;
@@ -142,23 +138,40 @@
             color: black;
             text-decoration: none;
         }
-        .failing {
-            background-color: rgb(235,26,36);
-        }
 
         .successful {
             background-color: rgb(0,138,44);
+        }
+        .successful.building {
+            background-color: rgb(0,90,20);
+        }
+
+        .failing {
+            background-color: rgb(235,26,36);
+        }
+        .failing.building {
+            background-color: rgb(175,5,15);
+        }
+
+        .claimed {
+            background-color: rgb(240,172,0);
+        }
+        .claimed.building {
+            background-color: darkgoldenrod;
+        }
+
+        .unstable {
+            background-color: yellow;
+        }
+        .unstable.building {
+            background-color: rgb(160, 150, 20);
         }
 
         .never.built {
             background-color: gray;
         }
-        .claimed {
-            background-color: rgb(240,172,0);
-        }
-
-        .unstable {
-            background-color: yellow;
+        .never.built.building {
+            background-color: darkgray;
         }
 
         .dashboard {

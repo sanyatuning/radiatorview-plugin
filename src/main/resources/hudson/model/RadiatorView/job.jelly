@@ -1,13 +1,14 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt">
-	<!--  Display details about a single job in the radiator -->
+	<!-- Display details about a single job in the radiator -->
 
 	<!-- show in a different style if the job is building or queued.  -->
 	<j:set var="clazz" value="normal" />
-	<j:if test="${job.building || job.queued}">
+	<j:if test="${job.getBuilding() || job.getQueued()}">
 		<j:set var="clazz" value="building" />
 	</j:if>
+
 	<div class="job-cont">
 	    <div class="job ${job.getStatus()} ${clazz}">
 
