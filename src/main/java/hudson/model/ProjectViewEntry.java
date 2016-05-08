@@ -186,12 +186,13 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public String getClaim() {
-		String claim = "";
+		StringBuilder claim = new StringBuilder();
 		for (IViewEntry job : jobs) {
-			if (job.isClaimed())
-				claim += (job.getName() + ": " + job.getClaim() + ";");
+			if (job.isClaimed()) {
+				claim.append(job.getName()).append(": ").append(job.getClaim()).append(";");
+			}
 		}
-		return claim;
+		return claim.toString();
 	}
 
 	public String getColor() {
@@ -246,22 +247,20 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public String getLastCompletedBuild() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public String getLastStableBuild() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	public Boolean getQueued() {
-        for (IViewEntry job : jobs) {
-            if (job.getQueued()) {
-                return true;
-            }
-        }
-        return false;
+		for (IViewEntry job : jobs) {
+		    if (job.getQueued()) {
+		        return true;
+		    }
+		}
+		return false;
 	}
 
 	public boolean getStable() {
@@ -323,11 +322,11 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public boolean isNotBuilt() {
-        for (IViewEntry job : jobs) {
-            if (job.isNotBuilt()) {
-                return true;
-            }
-        }
-        return false;
+		for (IViewEntry job : jobs) {
+		    if (job.isNotBuilt()) {
+		        return true;
+		    }
+		}
+		return false;
 	}
 }

@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -56,83 +57,54 @@ public class RadiatorView extends ListView {
 	 * User configuration - show stable builds when there are some unstable
 	 * builds.
 	 */
-	Boolean showStable = false;
+	 @DataBoundSetter
+	 Boolean showStable = false;
 
 	/**
 	 * User configuration - show details in stable builds.
 	 */
-	Boolean showStableDetail = false;
+	 @DataBoundSetter
+	 Boolean showStableDetail = false;
 
 	/**
 	 * User configuration - show build stability icon.
 	 */
-	Boolean showBuildStability = false;
+	 @DataBoundSetter
+	 Boolean showBuildStability = false;
 
 	/**
 	 * User configuration - high visibility mode.
 	 */
-	Boolean highVis = true;
+	 @DataBoundSetter
+	 Boolean highVis = true;
 
 	/**
 	 * User configuration - group builds by regex.
 	 */
-    Boolean groupByRegex = true;
+	@DataBoundSetter
+	Boolean groupByRegex = true;
 
-    /**
-     * User configuration - group builds by regex.
-     */
-    String groupRegex;
+	 /**
+	  * User configuration - text for the caption to be used on the radiator's headline.
+	  */
+	 @DataBoundSetter
+	 String captionText;
 
-	/**
-	 * User configuration - text for the caption to be used on the radiator's headline.
-	 */
-	String captionText;
+	 /**
+	  * User configuration - size in points (1pt = 1/72in) for the caption to be used on the radiator's headline.
+	  */
+	 @DataBoundSetter
+	 Integer captionSize;
 	 
-	/**
-	 * User configuration - size in points (1pt = 1/72in) for the caption to be used on the radiator's headline.
-	 */
-	Integer captionSize;
-
 	/**
 	 * @param name
 	 *            view name.
-	 * @param showStable
-	 *            if stable builds should be shown.
-	 * @param showStableDetail
-	 *            if detail should be shown for stable builds.
-	 * @param highVis
-	 *            high visibility mode.
-     * @param groupByRegex
-     *            If true, builds will be shown grouped together based on user defined regex.
-     * @param groupRegex
-     *            regex match groups will be concatenated to project name
-	 * @param showBuildStability
-	 *            Shows weather icon for job view when true.
-	 * @param captionText
-	 *            Caption text to be used on the radiator's headline.
-	 * @param captionSize
-	 *            Caption size for the radiator's headline.
 	 */
 	@DataBoundConstructor
-	public RadiatorView(String name, Boolean showStable,
-			Boolean showStableDetail, Boolean highVis, Boolean groupByRegex, String groupRegex,
-			Boolean showBuildStability, String captionText, Integer captionSize) {
+	public RadiatorView(String name) {
 		super(name);
-		this.showStable = showStable;
-		this.showStableDetail = showStableDetail;
-		this.highVis = highVis;
-		this.groupByRegex = groupByRegex;
-		this.groupRegex = groupRegex == null ? DEFAULT_GROUP_REGEX : groupRegex;
-		this.showBuildStability = showBuildStability;
-		this.captionText = captionText;
-		this.captionSize = captionSize;
 	}
 	
-	public RadiatorView(String name)
-	{
-		super(name);
-	}
-
 	/**
 	 * @return the colors to use
 	 */
@@ -154,18 +126,18 @@ public class RadiatorView extends ListView {
 		}
 
 		for (TopLevelItem item : super.getItems()) {
-			if (item instanceof AbstractProject) {
-				AbstractProject project = (AbstractProject) item;
-				if (!project.isDisabled()) {
-					IViewEntry entry = new JobViewEntry(this, project);
-					contents.addBuild(entry);
-				}
+			if(item instanceof Job && !isDisabled(item)) {
+				IViewEntry entry = new JobViewEntry(this, (Job<?, ?>) item);
+				contents.addBuild(entry);
 			}
 		}
-
 		return contents;
 	}
-	
+
+	private boolean isDisabled(TopLevelItem item) {
+		return item instanceof AbstractProject && ((AbstractProject) item).isDisabled();
+	}
+
 	public ProjectViewEntry getContentsByPrefix()
 	{
 		ProjectViewEntry contents = new ProjectViewEntry();
@@ -202,23 +174,12 @@ public class RadiatorView extends ListView {
 	}
 
 
-	/**
-	 * Gets from the request the configuration parameters
-	 * 
-	 * @param req
-	 *            {@link StaplerRequest}
-	 * @throws ServletException
-	 *             if any
-	 * @throws FormException
-	 *             if any
-	 */
 	@Override
 	protected void submit(StaplerRequest req) throws ServletException, IOException,
 			FormException {
 		super.submit(req);
 		this.showStable = Boolean.parseBoolean(req.getParameter("showStable"));
-		this.showStableDetail = Boolean.parseBoolean(req
-				.getParameter("showStableDetail"));
+		this.showStableDetail = Boolean.parseBoolean(req.getParameter("showStableDetail"));
 		this.highVis = Boolean.parseBoolean(req.getParameter("highVis"));
         this.groupByRegex = req.getParameter("groupByRegex") != null;
         if (this.groupByRegex) {
