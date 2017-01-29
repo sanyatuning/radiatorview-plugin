@@ -19,7 +19,7 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
+import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -84,7 +84,14 @@ public class RadiatorView extends ListView {
 	@DataBoundSetter
 	Boolean groupByRegex = true;
 
-	 /**
+
+	/**
+	 * User configuration - group builds by regex.
+	 */
+	@DataBoundSetter
+	String groupRegex;
+
+	/**
 	  * User configuration - text for the caption to be used on the radiator's headline.
 	  */
 	 @DataBoundSetter
@@ -120,7 +127,7 @@ public class RadiatorView extends ListView {
 
 		placeInQueue = new HashMap<hudson.model.Queue.Item, Integer>();
 		int j = 1;
-		for (hudson.model.Queue.Item i : Hudson.getInstance().getQueue()
+		for (hudson.model.Queue.Item i : Jenkins.getInstance().getQueue()
 				.getItems()) {
 			placeInQueue.put(i, j++);
 		}

@@ -5,3 +5,4 @@ target/
 work/
 .java-version
 *.iml
+.idea/

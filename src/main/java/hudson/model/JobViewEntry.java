@@ -5,16 +5,15 @@ import hudson.matrix.MatrixRun;
 import hudson.matrix.MatrixBuild;
 import hudson.tasks.test.AbstractTestResultAction;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.String;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
-import org.jfree.util.Log;
 
 /**
  * Represents a job to be shown in a view. Based heavily on the XFPanelEntry in
@@ -445,7 +444,7 @@ public class JobViewEntry implements IViewEntry {
 	 */
 	public String getClaim() {
 		// check we have claim plugin
-		if (Hudson.getInstance().getPlugin("claim") == null) {
+		if (Jenkins.getInstance().getPlugin("claim") == null) {
 			return null;
 		}
 		Run<?, ?> lastBuild = getLastCompletedRun();
@@ -476,7 +475,7 @@ public class JobViewEntry implements IViewEntry {
 	}
 
 	public String getUnclaimedMatrixBuilds() {
-		if (Hudson.getInstance().getPlugin("claim") == null) {
+		if (Jenkins.getInstance().getPlugin("claim") == null) {
 			return "";
 		}
 		Run<?, ?> lastBuild = getLastCompletedRun();
