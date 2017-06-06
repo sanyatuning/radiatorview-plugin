@@ -142,7 +142,7 @@ public class ProjectViewEntry implements IViewEntry {
 		if (getStable()) {
 			return "successful";
 		}
-		if (getUnclaimedJobs().size() == 0) {
+		if (getUnclaimedJobs().isEmpty()) {
 			return "claimed";
 		}
 		if (getBroken()) {
@@ -152,13 +152,16 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public String getBackgroundColor() {
-		if (getBroken() || getFailCount() > 0)
-			if (getUnclaimedJobs().size() == 0)
+		if (getBroken() || getFailCount() > 0) {
+			if (getUnclaimedJobs().isEmpty()) {
 				return "orange";
-			else
+			} else {
 				return "red";
-		else
+			}
+		}
+		else {
 			return "green";
+		}
 	}
 
 	public Boolean getBroken() {
@@ -280,7 +283,7 @@ public class ProjectViewEntry implements IViewEntry {
 	}
 
 	public String getSuccessPercentage() {
-		return "" + 100 * getSuccessCount() / getTestCount();
+		return Integer.toString(100 * getSuccessCount() / getTestCount());
 	}
 
 	public int getTestCount() {

@@ -1,10 +1,18 @@
 package hudson.model;
 
+import com.cloudbees.hudson.plugins.folder.AbstractFolder;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Descriptor.FormException;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
+import org.apache.commons.lang.StringUtils;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.lang.String;
 import java.lang.StringBuilder;
@@ -12,18 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import javax.servlet.ServletException;
-
-import jenkins.model.Jenkins;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * A configurable Radiator-Style job view suitable for use in extreme feedback
@@ -37,6 +38,8 @@ public class RadiatorView extends ListView {
 	
 	private static final int DEFAULT_CAPTION_SIZE = 36;
 	private static final String DEFAULT_GROUP_REGEX = "(.*?)[-_:].*";
+
+	private static final Logger LOGGER = Logger.getLogger(RadiatorView.class.getName());
 
 	/**
 	 * Entries to be shown in the view.
@@ -102,7 +105,10 @@ public class RadiatorView extends ListView {
 	  */
 	 @DataBoundSetter
 	 Integer captionSize;
-	 
+
+	 @DataBoundSetter
+	 String excludeRegex;
+
 	/**
 	 * @param name
 	 *            view name.
@@ -123,22 +129,38 @@ public class RadiatorView extends ListView {
 	}
 
 	public ProjectViewEntry getContents() {
-		ProjectViewEntry contents = new ProjectViewEntry();
+		ProjectViewEntry content = new ProjectViewEntry();
 
 		placeInQueue = new HashMap<hudson.model.Queue.Item, Integer>();
 		int j = 1;
-		for (hudson.model.Queue.Item i : Jenkins.getInstance().getQueue()
+		for (hudson.model.Queue.Item i : Jenkins.getActiveInstance().getQueue()
 				.getItems()) {
 			placeInQueue.put(i, j++);
 		}
 
-		for (TopLevelItem item : super.getItems()) {
-			if(item instanceof Job && !isDisabled(item)) {
+		LOGGER.fine("Collecting items for view " + getViewName());
+		addItems(getItems(), content);
+		return content;
+	}
+
+	private void addItems(Collection<TopLevelItem> items, ProjectViewEntry content) {
+		for (TopLevelItem item : items) {
+			LOGGER.fine(item.getName() + " (" + item.getClass() + ")");
+			if (item instanceof AbstractFolder) {
+				addItems(((AbstractFolder) item).getItems(), content);
+			}
+			if (item instanceof Job && !isDisabled(item) && !isExcluded(item)) {
 				IViewEntry entry = new JobViewEntry(this, (Job<?, ?>) item);
-				contents.addBuild(entry);
+				content.addBuild(entry);
 			}
 		}
-		return contents;
+	}
+
+	private boolean isExcluded(TopLevelItem item) {
+		final boolean matches = Pattern.matches(excludeRegex, item.getFullName());
+		LOGGER.log(Level.FINE, "Checking {0}, fullName={1}, excluded={2}",
+		           new String[]{item.getName(), item.getFullName(), String.valueOf(matches)});
+		return matches;
 	}
 
 	private boolean isDisabled(TopLevelItem item) {
@@ -181,6 +203,10 @@ public class RadiatorView extends ListView {
 	}
 
 
+	public String getExcludeRegex() {
+		return excludeRegex;
+	}
+
 	@Override
 	protected void submit(StaplerRequest req) throws ServletException, IOException,
 			FormException {
@@ -194,8 +220,9 @@ public class RadiatorView extends ListView {
             this.groupRegex = param.isEmpty() ? DEFAULT_GROUP_REGEX : param;
         }
 		this.showBuildStability = Boolean.parseBoolean(req.getParameter("showBuildStability"));
-        this.captionText = req.getParameter("captionText");
-        try {
+		this.captionText = req.getParameter("captionText");
+		this.excludeRegex = req.getParameter("excludeRegex");
+		try {
 			this.captionSize = Integer.parseInt(req.getParameter("captionSize"));
 		} catch (NumberFormatException e) {
 			this.captionSize = DEFAULT_CAPTION_SIZE;
@@ -313,20 +340,20 @@ public class RadiatorView extends ListView {
 			return "Radiator";
 		}
 
-        /**
-         * Checks if the include regular expression is valid.
-         */
-        public FormValidation doCheckIncludeRegex(@QueryParameter String value) {
-            String v = Util.fixEmpty(value);
-            if (v != null) {
-                try {
-                    Pattern.compile(v);
-                } catch (PatternSyntaxException pse) {
-                    return FormValidation.error(pse.getMessage());
-                }
-            }
-            return FormValidation.ok();
-        }
+		/**
+		 * Checks if the include regular expression is valid.
+		 */
+		public FormValidation doCheckIncludeRegex(@QueryParameter String value) {
+			String v = Util.fixEmpty(value);
+			if (v != null) {
+				try {
+					Pattern.compile(v);
+				} catch (PatternSyntaxException pse) {
+					return FormValidation.error(pse.getMessage());
+				}
+			}
+			return FormValidation.ok();
+		}
 
         /**
          * Checks if the group regular expression is valid.

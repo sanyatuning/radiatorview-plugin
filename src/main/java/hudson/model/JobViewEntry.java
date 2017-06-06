@@ -68,7 +68,7 @@ public class JobViewEntry implements IViewEntry {
 	 * @see hudson.model.IViewEntry#getName()
 	 */
 	public String getName() {
-		return job.getName();
+		return job.getFullName();
 	}
 
 	/*
@@ -444,7 +444,7 @@ public class JobViewEntry implements IViewEntry {
 	 */
 	public String getClaim() {
 		// check we have claim plugin
-		if (Jenkins.getInstance().getPlugin("claim") == null) {
+		if (Jenkins.getActiveInstance().getPlugin("claim") == null) {
 			return null;
 		}
 		Run<?, ?> lastBuild = getLastCompletedRun();
@@ -452,7 +452,7 @@ public class JobViewEntry implements IViewEntry {
 			return null;
 		}
 		// find the claim
-		String claim = "";
+		final String claim;
 		if (lastBuild instanceof hudson.matrix.MatrixBuild) {
 			MatrixBuild matrixBuild = (hudson.matrix.MatrixBuild) lastBuild;
 			claim = buildMatrixClaimString(matrixBuild, true);
@@ -475,7 +475,7 @@ public class JobViewEntry implements IViewEntry {
 	}
 
 	public String getUnclaimedMatrixBuilds() {
-		if (Jenkins.getInstance().getPlugin("claim") == null) {
+		if (Jenkins.getActiveInstance().getPlugin("claim") == null) {
 			return "";
 		}
 		Run<?, ?> lastBuild = getLastCompletedRun();
