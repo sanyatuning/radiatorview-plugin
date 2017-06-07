@@ -157,6 +157,9 @@ public class RadiatorView extends ListView {
 	}
 
 	private boolean isExcluded(TopLevelItem item) {
+		if (excludeRegex == null) {
+			return false;
+		}
 		final boolean matches = Pattern.matches(excludeRegex, item.getFullName());
 		LOGGER.log(Level.FINE, "Checking {0}, fullName={1}, excluded={2}",
 		           new String[]{item.getName(), item.getFullName(), String.valueOf(matches)});
